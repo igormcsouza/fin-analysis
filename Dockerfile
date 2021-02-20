@@ -1,13 +1,21 @@
 FROM python:3.8-alpine3.12
 
+# Install dependencies for python packages
+RUN apk add --no-cache --virtual \
+    .build_deps \
+    libressl-dev \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    libzmq \
+    zeromq-dev \
+    gcc
+
+# Upgrade pip if necessary
 RUN python3 -m pip install --upgrade pip
 
-RUN apk add --no-cache --virtual \
-        .build_deps \
-        libressl-dev \
-        musl-dev \
-        libffi-dev \
-        gcc
+# Workaround for criptography error
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
